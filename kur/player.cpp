@@ -4,11 +4,11 @@ Player::Player(QGraphicsItem *parent) : Tank(parent) {
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Player::timerSlot);
     timer->start(100);
+    hp = maxhp;
 }
 Player::~Player(){}
 
 void Player::keyPressEvent(QKeyEvent* e){
-    qDebug() << e->key();
     if(e->key() == Qt::Key_D){
         this->move(Square::RIGHT);
     }
@@ -28,6 +28,11 @@ void Player::keyPressEvent(QKeyEvent* e){
     //     qDebug() << "f";
     // }
     update();
+}
+
+void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
+    painter->setBrush(QColor(0,255,0));
+    this->Tank::paint(painter, option, widget);
 }
 
 void Player::keyReleaseEvent(QKeyEvent* e){

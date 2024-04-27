@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     bullet.cpp \
+    enemy.cpp \
     main.cpp \
     player.cpp \
     square.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
 
 HEADERS += \
     bullet.h \
+    enemy.h \
     player.h \
     square.h \
     tank.h \

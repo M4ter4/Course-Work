@@ -2,6 +2,7 @@
 #include "QDebug"
 
 Tank::Tank(QGraphicsItem *parent) : Square(parent) {
+    hp = maxhp;
     this->direction = Direction::UP;
 }
 Tank::~Tank(){}
@@ -12,10 +13,19 @@ void Tank::rotate(Direction direction){
 }
 void Tank::move(){
     double radians = qDegreesToRadians((double)direction);
-    qDebug() << " " << radians << " " << qCos(radians) << " " << qSin(radians);
     this->setPos(this->x() + 10*qCos(radians), this->y() + 10*qSin(radians));
-
 }
+
+void Tank::changehp(qint8 delta){
+    this->hp += delta;
+    if(hp>maxhp){
+        hp = maxhp;
+    }
+    if (hp <= 0){
+        qDebug() << "ADD SIGNAL EMITTING";
+    }
+}
+
 void Tank::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
     QRectF boundingRect = this->boundingRect();
     QPolygonF polygon;

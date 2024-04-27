@@ -14,6 +14,8 @@ public:
     void move(Direction direction);
 
 protected:
+    const qint8 maxhp = 10;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     void keyPressEvent(QKeyEvent* e) override;
     void keyReleaseEvent(QKeyEvent* e) override;
 

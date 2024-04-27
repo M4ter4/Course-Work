@@ -14,8 +14,11 @@ public:
     void rotate(Direction direction);
     void move();
     void shoot();
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void changehp(qint8 delta);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 protected:
+    const qint8 maxhp = 5;
+    qint8 hp;
     Direction direction;
 };
 
