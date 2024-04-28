@@ -1,29 +1,41 @@
 #include "player.h"
 
-Player::Player(QGraphicsItem *parent) : Tank(parent) {
+Player::Player(QGraphicsScene *scene, QGraphicsItem *parent) : Tank(scene, parent) {
+    shootTimer = new QTimer(this);
+    shootTimer->setSingleShot(true);
+    shootTimer->setInterval(1000);
+    connect(shootTimer, &QTimer::timeout, this, &Player::shootTimerTimeout);
     QTimer *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &Player::timerSlot);
+    connect(timer, &QTimer::timeout, this, &Player::moveTimerTimeout);
     timer->start(100);
     hp = maxhp;
 }
 Player::~Player(){}
 
+void Player::shoot(qint8 damage){
+    if(isShootEnabled){
+        this->Tank::shoot(damage);
+        isShootEnabled = false;
+        shootTimer->start();
+    }
+}
+
 void Player::keyPressEvent(QKeyEvent* e){
     if(e->key() == Qt::Key_D){
-        this->move(Square::RIGHT);
+        this->enableMovement(Square::RIGHT);
     }
     if(e->key() == Qt::Key_S){
-        this->move(Square::DOWN);
+        this->enableMovement(Square::DOWN);
     }
     if(e->key() == Qt::Key_A){
-        this->move(Square::LEFT);
+        this->enableMovement(Square::LEFT);
     }
     if(e->key() == Qt::Key_W){
-        this->move(Square::UP);
+        this->enableMovement(Square::UP);
     }
-    // if(e->key() == Qt::Key_Space){
-    //     qDebug() << "space";
-    // }
+    if(e->key() == Qt::Key_Space){
+        this->shoot(1);
+    }
     // if(e->key() == Qt::Key_F){
     //     qDebug() << "f";
     // }
@@ -54,22 +66,26 @@ void Player::keyReleaseEvent(QKeyEvent* e){
     }
 
     if(this->direction == direction){
-        enableMove = false;
+        isMoveEnabled = false;
     }
 }
 
-void Player::move(Direction direction){
+void Player::enableMovement(Direction direction){
     if (this->direction == direction){
-        this->enableMove = true;
+        this->isMoveEnabled = true;
     }
     else {
         this->rotate(direction);
-        this->enableMove = false;
+        this->isMoveEnabled = false;
     }
 }
 
-void Player::timerSlot(){
-    if(enableMove){
-    this->Tank::move();
+void Player::moveTimerTimeout(){
+    if(isMoveEnabled){
+    this->move();
     }
+}
+
+void Player::shootTimerTimeout(){
+    this->isShootEnabled=true;
 }

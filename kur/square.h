@@ -7,6 +7,10 @@
 #include <QPainter>
 #include <QtMath>
 #include <QDebug>
+#include <QTimer>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QThread>
 
 class Square : public QGraphicsObject
 {
@@ -17,11 +21,12 @@ public:
         LEFT = 180,
         UP = 270
     };
-    Square(QGraphicsItem *parent = 0);
+    Square(QGraphicsScene *scene = 0, QGraphicsItem *parent = 0);
     ~Square();
 protected:
-    QRectF boundingRect() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    QGraphicsScene *scene;
+    QRectF boundingRect() const override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 };
 
 #endif // SQUARE_H

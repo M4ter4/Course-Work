@@ -1,7 +1,8 @@
 #include "square.h"
 
-Square::Square(QGraphicsItem *parent) : QGraphicsObject(parent) {
-
+Square::Square(QGraphicsScene *scene, QGraphicsItem *parent) : QGraphicsObject(parent) {
+    scene->addItem(this);
+    this->scene = scene;
 }
 
 Square::~Square(){}

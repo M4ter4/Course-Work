@@ -1,6 +1,6 @@
 #include "enemy.h"
 
-Enemy::Enemy(QGraphicsItem *parent) : Tank(parent) {}
+Enemy::Enemy(QGraphicsScene *scene, QGraphicsItem *parent) : Tank(scene, parent) {}
 
 Enemy::~Enemy(){}
 

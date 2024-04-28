@@ -9,9 +9,10 @@ class Player : public Tank
 {
 
 public:
-    Player(QGraphicsItem *parent = 0);
+    Player(QGraphicsScene *scene, QGraphicsItem *parent = 0);
     ~Player();
-    void move(Direction direction);
+    void enableMovement(Direction direction);
+    void shoot(qint8 damage) override;
 
 protected:
     const qint8 maxhp = 10;
@@ -20,9 +21,12 @@ protected:
     void keyReleaseEvent(QKeyEvent* e) override;
 
 private:
-    bool enableMove = false;
+    bool isMoveEnabled = false;
+    QTimer *shootTimer;
+    bool isShootEnabled = true;
 private slots:
-    void timerSlot();
+    void moveTimerTimeout();
+    void shootTimerTimeout();
 };
 
 #endif // PLAYER_H

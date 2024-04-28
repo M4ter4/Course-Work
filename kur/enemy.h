@@ -7,7 +7,7 @@
 class Enemy : public Tank
 {
 public:
-    Enemy(QGraphicsItem *parent = 0);
+    Enemy(QGraphicsScene *scene, QGraphicsItem *parent = 0);
     ~Enemy();
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
