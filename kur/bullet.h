@@ -5,8 +5,9 @@
 
 class Bullet : public Square
 {
+
 public:
-    Bullet(QGraphicsScene *scene, qreal x0, qreal y0, Direction direction, qint8 damage, QGraphicsItem *parent = 0);
+    Bullet(qreal x0, qreal y0, Direction direction, qint8 damage, QGraphicsObject *parent = 0);
     ~Bullet();
 protected:
     QRectF boundingRect() const override;

@@ -1,9 +1,10 @@
 #include "tank.h"
 #include "QDebug"
+#include "steelwall.h"
 
-Tank::Tank(QGraphicsScene *scene, QGraphicsItem *parent) : Square(scene, parent) {
+Tank::Tank(qint8 x, qint8 y, QGraphicsObject *parent) : Square(x,y, parent) {
     hp = maxhp;
-    this->direction = Direction::UP;
+    this->direction = Direction::NONE;
 }
 Tank::~Tank(){}
 
@@ -17,7 +18,8 @@ QRectF Tank::boundingRect() const
 }
 
 void Tank::shoot(qint8 damage){
-    Bullet *bullet = new Bullet(scene, this->x(), this->y(), this->direction, damage);
+    Bullet *bullet = new Bullet(this->x(), this->y(), this->direction, damage);
+    scene()->addItem(bullet);
 }
 
 void Tank::rotate(Direction direction){
@@ -25,28 +27,52 @@ void Tank::rotate(Direction direction){
     update();
 }
 void Tank::move(){
+    if (direction == NONE){
+        return;
+    }
     double radians = qDegreesToRadians((double)direction);
-    this->setPos(this->x() + 50*qCos(radians), this->y() + 50*qSin(radians));
+    this->setPos(this->x() + 40*qCos(radians), this->y() + 40*qSin(radians));
+    if(qRound64(x())>780){
+        this->setPos(this->x() - 40, this->y());
+    }
+    if(qRound64(x())<20){
+        this->setPos(this->x() + 40, this->y());
+    }
+    if(qRound64(y())>780){
+        this->setPos(this->x(), this->y() - 40);
+    }
+    if(qRound64(y())<20){
+        this->setPos(this->x(), this->y() + 40);
+    }
+    foreach(auto item, scene()->collidingItems(this)){
+        if(Tank *tank = dynamic_cast<Tank*>(item)){
+            this->setPos(this->x() - 40*qCos(radians), this->y() - 40*qSin(radians));
+        }
+        if(SteelWall *wall = dynamic_cast<SteelWall*>(item)){
+            this->setPos(this->x() - 40*qCos(radians), this->y() - 40*qSin(radians));
+        }
+    }
 }
 
-void Tank::changehp(qint8 delta){
-    this->hp += delta;
+void Tank::takeDamage(qint8 damage){
+    this->hp -= damage;
     if(hp>maxhp){
         hp = maxhp;
     }
     if (hp <= 0){
         qDebug() << "ADD SIGNAL EMITTING";
+        deleteLater();
     }
 }
 
 void Tank::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
     QRectF boundingRect = this->boundingRect();
-    QPolygonF polygon;
-    polygon.append(boundingRect.topLeft());
-    polygon.append(QPointF(boundingRect.center().x(), boundingRect.top()));
-    polygon.append(QPointF(boundingRect.right(), boundingRect.center().x()));
-    polygon.append(QPointF(boundingRect.center().x(), boundingRect.bottom()));
-    polygon.append(boundingRect.bottomLeft());
+    // QPolygonF polygon;
+    // polygon.append(boundingRect.topLeft());
+    // polygon.append(QPointF(boundingRect.center().x(), boundingRect.top()));
+    // polygon.append(QPointF(boundingRect.right(), boundingRect.center().x()));
+    // polygon.append(QPointF(boundingRect.center().x(), boundingRect.bottom()));
+    // polygon.append(boundingRect.bottomLeft());
     this->setRotation(direction);
-    painter->drawPolygon(polygon);
+    this->Square::paint(painter, option, widget);
 }

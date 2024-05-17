@@ -8,5 +8,6 @@ int main(int argc, char *argv[])
     Widget w;
     w.setFixedSize(1500,900);
     w.show();
+
     return a.exec();
 }

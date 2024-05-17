@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "player.h"
+#include "levelscene.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -19,7 +20,6 @@ public:
     ~Widget();
 
 private:
-    Player* player;
     Ui::Widget *ui;
 };
 #endif // WIDGET_H

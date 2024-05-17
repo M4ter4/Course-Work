@@ -10,23 +10,29 @@
 #include <QTimer>
 #include <QGraphicsScene>
 #include <QGraphicsView>
-#include <QThread>
+#include <QDir>
+
 
 class Square : public QGraphicsObject
 {
+
 public:
     enum Direction{
+        NONE = 360,
         RIGHT = 0,
         DOWN = 90,
         LEFT = 180,
         UP = 270
     };
-    Square(QGraphicsScene *scene = 0, QGraphicsItem *parent = 0);
+    Square(qint8 x, qint8 y, QGraphicsObject *parent = 0);
     ~Square();
+    qint8 getCellX();
+    qint8 getCellY();
 protected:
-    QGraphicsScene *scene;
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+    QPixmap pixmap;
+
 };
 
 #endif // SQUARE_H

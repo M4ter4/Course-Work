@@ -1,6 +1,8 @@
 #include "player.h"
 
-Player::Player(QGraphicsScene *scene, QGraphicsItem *parent) : Tank(scene, parent) {
+Player::Player(qint8 x, qint8 y, QGraphicsObject *parent) : Tank(x, y, parent) {
+    QPixmap map(QDir::current().filePath("resources/player.jpg"));
+    this->pixmap = map;
     shootTimer = new QTimer(this);
     shootTimer->setSingleShot(true);
     shootTimer->setInterval(1000);
@@ -9,6 +11,12 @@ Player::Player(QGraphicsScene *scene, QGraphicsItem *parent) : Tank(scene, paren
     connect(timer, &QTimer::timeout, this, &Player::moveTimerTimeout);
     timer->start(100);
     hp = maxhp;
+    currentCellX = getCellX();
+    currentCellY = getCellY();
+    emit updatePos(currentCellX, currentCellY);
+    // tickTimer = new QTimer();
+    // connect(tickTimer, &QTimer::timeout, this, &Player::tick);
+    // tickTimer->start(1);
 }
 Player::~Player(){}
 
@@ -36,16 +44,16 @@ void Player::keyPressEvent(QKeyEvent* e){
     if(e->key() == Qt::Key_Space){
         this->shoot(1);
     }
-    // if(e->key() == Qt::Key_F){
-    //     qDebug() << "f";
-    // }
     update();
 }
 
-void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
-    painter->setBrush(QColor(0,255,0));
-    this->Tank::paint(painter, option, widget);
-}
+// void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
+//     // painter->setBrush(QColor(0,255,0));
+//     // this->Tank::paint(painter, option, widget);
+//     painter->drawRect(boundingRect());
+    // QPixmap map(QDir::current().filePath("resources/player.png"));
+//     painter->drawPixmap(boundingRect(), map, QRectF(0,0,38,38));
+// }
 
 void Player::keyReleaseEvent(QKeyEvent* e){
     Direction direction;
@@ -83,9 +91,17 @@ void Player::enableMovement(Direction direction){
 void Player::moveTimerTimeout(){
     if(isMoveEnabled){
     this->move();
+        if(currentCellX != getCellX() || currentCellY != getCellY()){
+        currentCellX = getCellX();
+        currentCellY = getCellY();
+        emit updatePos(currentCellX, currentCellY);
+    }
     }
 }
 
 void Player::shootTimerTimeout(){
     this->isShootEnabled=true;
+}
+void Player::tick(){
+    qDebug() << "playerTick";
 }

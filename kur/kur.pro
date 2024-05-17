@@ -9,19 +9,25 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    brickwall.cpp \
     bullet.cpp \
     enemy.cpp \
+    levelscene.cpp \
     main.cpp \
     player.cpp \
     square.cpp \
+    steelwall.cpp \
     tank.cpp \
     widget.cpp
 
 HEADERS += \
+    brickwall.h \
     bullet.h \
     enemy.h \
+    levelscene.h \
     player.h \
     square.h \
+    steelwall.h \
     tank.h \
     widget.h
 
@@ -32,3 +38,6 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    resources/player.png
