@@ -40,4 +40,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    resources/player.png
+    resources/brick.jpg \
+    resources/enemy.jpg \
+    resources/map1.txt \
+    resources/player.jpg \
+    resources/player.png \
+    resources/steel.jpg

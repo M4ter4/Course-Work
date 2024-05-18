@@ -12,7 +12,7 @@ class LevelScene : public QGraphicsScene
 public:
     LevelScene();
     ~LevelScene();
-    QVector<QVector<bool>>* getField();
+    // QVector<QVector<bool>>* getField();
     QVector<Enemy>* getEnemies();
     Player* getPlayer();
 private:

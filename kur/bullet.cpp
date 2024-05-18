@@ -28,7 +28,7 @@ void Bullet::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 }
 void Bullet::move(){
     double radians = qDegreesToRadians((double)direction);
-    this->setPos(this->x() + 10*qCos(radians), this->y() + 10*qSin(radians));
+    this->setPos(this->x() + 15*qCos(radians), this->y() + 15*qSin(radians));
     foreach(auto item, scene()->collidingItems(this)){
         if(Tank *tank = dynamic_cast<Tank*>(item)){
             tank->takeDamage(damage);

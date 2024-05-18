@@ -5,10 +5,10 @@ LevelScene::LevelScene() {
 
     field = new QVector<QVector<bool>>(20);
 
-    // Заполняем каждый внутренний QVector значениями true
     for (QVector<bool>& row : *field) {
         row.fill(true, 20);
     }
+
     QFile file(QDir::current().filePath("resources/map1.txt"));
     file.open(QIODevice::ReadWrite);
     QTextStream s(&file);
@@ -19,17 +19,16 @@ LevelScene::LevelScene() {
             walls[i][j] = current.at(j).unicode() - '0';
         }
     }
+
     for (qint8 i = 0; i < 20; ++i) {
         for (qint8 j = 0; j < 20; ++j) {
             qint8 curr = walls[i][j];
             if(curr == 1){
-                qDebug() << "steel";
                 SteelWall* wall = new SteelWall(j,i);
                 this->addItem(wall);
                 (*field)[i][j] = false;
             }
             if(curr == 2){
-                qDebug() << "brick";
                 BrickWall* wall = new BrickWall(j,i);
                 this->addItem(wall);
                 (*field)[i][j] = false;
@@ -38,29 +37,31 @@ LevelScene::LevelScene() {
         }
     }
 
-
-    Player* obj = new Player(10,10);
+    Player* obj = new Player(0,0);
     player = obj;
     this->addItem(obj);
     obj->grabKeyboard();
     connect(obj, &Player::updatePos, this, &LevelScene::onPlayerChangeCell);
 
-
-    Enemy *enemy = new Enemy(2,2);
-    connect(this, &LevelScene::updatePlayerPos, enemy, &Enemy::onPlayerCellUpdate);
-    connect(this, &LevelScene::updateField, enemy, &Enemy::onWallDestroy);
-    this->addItem(enemy);
+    Enemy *enemy1 = new Enemy(9,10);
+    enemy1->onPlayerCellUpdate(10, 10);
+    connect(this, &LevelScene::updatePlayerPos, enemy1, &Enemy::onPlayerCellUpdate);
+    connect(this, &LevelScene::updateField, enemy1, &Enemy::onWallDestroy);
+    this->addItem(enemy1);
+    Enemy *enemy2 = new Enemy(8,10);
+    enemy2->onPlayerCellUpdate(10, 10);
+    connect(this, &LevelScene::updatePlayerPos, enemy2, &Enemy::onPlayerCellUpdate);
+    connect(this, &LevelScene::updateField, enemy2, &Enemy::onWallDestroy);
+    this->addItem(enemy2);
+    Enemy *enemy3 = new Enemy(7,10);
+    enemy3->onPlayerCellUpdate(10, 10);
+    connect(this, &LevelScene::updatePlayerPos, enemy3, &Enemy::onPlayerCellUpdate);
+    connect(this, &LevelScene::updateField, enemy3, &Enemy::onWallDestroy);
+    this->addItem(enemy3);
     emit updateField(field);
-
-
 }
 
 LevelScene::~LevelScene(){}
-
-QVector<QVector<bool>> *LevelScene::getField()
-{
-    return field;
-}
 
 QVector<Enemy> *LevelScene::getEnemies()
 {
@@ -74,7 +75,7 @@ Player* LevelScene::getPlayer()
 
 void LevelScene::onWallDestroy(qint8 x, qint8 y)
 {
-    (*field)[y][x] = false;
+    (*field)[y][x] = true;
     emit updateField(field);
 }
 

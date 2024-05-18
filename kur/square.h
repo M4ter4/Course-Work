@@ -24,6 +24,7 @@ public:
         LEFT = 180,
         UP = 270
     };
+    static Direction getOpposite(Direction dir);
     Square(qint8 x, qint8 y, QGraphicsObject *parent = 0);
     ~Square();
     qint8 getCellX();

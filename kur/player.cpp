@@ -3,20 +3,12 @@
 Player::Player(qint8 x, qint8 y, QGraphicsObject *parent) : Tank(x, y, parent) {
     QPixmap map(QDir::current().filePath("resources/player.jpg"));
     this->pixmap = map;
-    shootTimer = new QTimer(this);
-    shootTimer->setSingleShot(true);
-    shootTimer->setInterval(1000);
-    connect(shootTimer, &QTimer::timeout, this, &Player::shootTimerTimeout);
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Player::moveTimerTimeout);
-    timer->start(100);
+    timer->start(10);
     hp = maxhp;
     currentCellX = getCellX();
     currentCellY = getCellY();
-    emit updatePos(currentCellX, currentCellY);
-    // tickTimer = new QTimer();
-    // connect(tickTimer, &QTimer::timeout, this, &Player::tick);
-    // tickTimer->start(1);
 }
 Player::~Player(){}
 
@@ -24,7 +16,21 @@ void Player::shoot(qint8 damage){
     if(isShootEnabled){
         this->Tank::shoot(damage);
         isShootEnabled = false;
-        shootTimer->start();
+        reloadTimer->start();
+    }
+}
+
+void Player::move(qint64 stepSize)
+{
+    Tank::move(stepSize);
+    double radians = qDegreesToRadians((double)direction);
+    foreach(auto item, scene()->collidingItems(this)){
+        if(Tank *tank = dynamic_cast<Tank*>(item)){
+            this->setPos(this->x() - stepSize*qCos(radians), this->y() - stepSize*qSin(radians));
+        }
+        if(SteelWall *wall = dynamic_cast<SteelWall*>(item)){
+            this->setPos(this->x() - stepSize*qCos(radians), this->y() - stepSize*qSin(radians));
+        }
     }
 }
 
@@ -46,14 +52,6 @@ void Player::keyPressEvent(QKeyEvent* e){
     }
     update();
 }
-
-// void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
-//     // painter->setBrush(QColor(0,255,0));
-//     // this->Tank::paint(painter, option, widget);
-//     painter->drawRect(boundingRect());
-    // QPixmap map(QDir::current().filePath("resources/player.png"));
-//     painter->drawPixmap(boundingRect(), map, QRectF(0,0,38,38));
-// }
 
 void Player::keyReleaseEvent(QKeyEvent* e){
     Direction direction;
@@ -90,7 +88,7 @@ void Player::enableMovement(Direction direction){
 
 void Player::moveTimerTimeout(){
     if(isMoveEnabled){
-    this->move();
+    this->move(stepSize);
         if(currentCellX != getCellX() || currentCellY != getCellY()){
         currentCellX = getCellX();
         currentCellY = getCellY();
@@ -99,9 +97,3 @@ void Player::moveTimerTimeout(){
     }
 }
 
-void Player::shootTimerTimeout(){
-    this->isShootEnabled=true;
-}
-void Player::tick(){
-    qDebug() << "playerTick";
-}
