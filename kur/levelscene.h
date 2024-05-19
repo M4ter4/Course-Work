@@ -29,7 +29,6 @@ public slots:
      void changePlayerHPSlot(qint8 hp);
 signals:
     void updatePlayerPos(Square::Cell cell);
-    void updateField(QVector<QVector<bool>>*);
     void gameOverSignal();
     void enemyDeathSignal();
     void nextRoundSignal();

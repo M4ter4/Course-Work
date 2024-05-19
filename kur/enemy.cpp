@@ -1,12 +1,13 @@
 #include "enemy.h"
 
-Enemy::Enemy(qint8 x, qint8 y, QGraphicsObject *parent) : Tank(x, y, parent) {
+Enemy::Enemy(qint8 x, qint8 y,QVector<QVector<bool>>* field, QGraphicsObject *parent) : Tank(x, y, parent) {
     QPixmap map(QDir::current().filePath("resources/enemy.png"));
     this->rotate(Square::RIGHT);
     this->pixmap = map;
     tickTimer = new QTimer();
     connect(tickTimer, &QTimer::timeout, this, &Enemy::tick);
         tickTimer->start(10);
+    this->field = field;
 }
 
 Enemy::~Enemy(){}

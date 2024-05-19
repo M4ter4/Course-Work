@@ -60,6 +60,8 @@ void GameWidget::createNewGame()
     connect(scene, &LevelScene::enemyDeathSignal, this, &GameWidget::increaseKillCount);
     connect(scene, &LevelScene::changePlayerHP, this, &GameWidget::changePlayerHp);
     changePlayerHp(10);
+    this->killCount = 0;
+    ui->killsLabel->setText(QString::number(killCount));
 }
 
 

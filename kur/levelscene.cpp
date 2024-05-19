@@ -80,16 +80,13 @@ LevelScene::LevelScene(qint8 difficulty) {
 
     foreach (auto i, set) {
         Square::Cell p = freePoints.at(i);
-        Enemy *enemy = new Enemy(p.x,p.y);
+        Enemy *enemy = new Enemy(p.x,p.y,field);
         enemy->onPlayerCellUpdate(Square::Cell(playerX, playerY));
         connect(this, &LevelScene::updatePlayerPos, enemy, &Enemy::onPlayerCellUpdate);
-        connect(this, &LevelScene::updateField, enemy, &Enemy::onWallDestroy);
         connect(enemy, &Enemy::enemyDeathSignal, this, &LevelScene::onEnemyDeathSlot);
         this->addItem(enemy);
         ++currentEnemiesCount;
     }
-
-    emit updateField(field);
 
     powerUpTimer = new QTimer();
     connect(powerUpTimer, &QTimer::timeout, this, &LevelScene::onPowerUpTimeout);
@@ -140,8 +137,6 @@ void LevelScene::onPowerUpTimeout()
 void LevelScene::onWallDestroy(Square::Cell cell)
 {
     (*field)[cell.y][cell.x] = true;
-    emit updateField(field);
-
 }
 
 void LevelScene::onPlayerChangeCell(Square::Cell cell)
@@ -160,7 +155,6 @@ void LevelScene::onEnemyDeathSlot()
 
 void LevelScene::onPlayerDeathSlot()
 {
-    qDebug() << "Game over";
     emit gameOverSignal();
 }
 

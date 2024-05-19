@@ -295,6 +295,7 @@ DIST          = resources/brick.jpg \
 		../../Qt/5.15.2/gcc_64/mkspecs/features/qt_config.prf \
 		../../Qt/5.15.2/gcc_64/mkspecs/linux-g++/qmake.conf \
 		../../Qt/5.15.2/gcc_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../../Qt/5.15.2/gcc_64/mkspecs/features/exclusive_builds.prf \
 		../../Qt/5.15.2/gcc_64/mkspecs/features/toolchain.prf \
 		../../Qt/5.15.2/gcc_64/mkspecs/features/default_pre.prf \
@@ -546,6 +547,7 @@ Makefile: kur.pro ../../Qt/5.15.2/gcc_64/mkspecs/linux-g++/qmake.conf ../../Qt/5
 		../../Qt/5.15.2/gcc_64/mkspecs/features/qt_config.prf \
 		../../Qt/5.15.2/gcc_64/mkspecs/linux-g++/qmake.conf \
 		../../Qt/5.15.2/gcc_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../../Qt/5.15.2/gcc_64/mkspecs/features/exclusive_builds.prf \
 		../../Qt/5.15.2/gcc_64/mkspecs/features/toolchain.prf \
 		../../Qt/5.15.2/gcc_64/mkspecs/features/default_pre.prf \
@@ -762,6 +764,7 @@ Makefile: kur.pro ../../Qt/5.15.2/gcc_64/mkspecs/linux-g++/qmake.conf ../../Qt/5
 ../../Qt/5.15.2/gcc_64/mkspecs/features/qt_config.prf:
 ../../Qt/5.15.2/gcc_64/mkspecs/linux-g++/qmake.conf:
 ../../Qt/5.15.2/gcc_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 ../../Qt/5.15.2/gcc_64/mkspecs/features/exclusive_builds.prf:
 ../../Qt/5.15.2/gcc_64/mkspecs/features/toolchain.prf:
 ../../Qt/5.15.2/gcc_64/mkspecs/features/default_pre.prf:
@@ -2761,7 +2764,27 @@ gameoverwidget.o: gameoverwidget.cpp gameoverwidget.h \
 		../../Qt/5.15.2/gcc_64/include/QtCore/qfiledevice.h \
 		../../Qt/5.15.2/gcc_64/include/QtGui/qvector2d.h \
 		../../Qt/5.15.2/gcc_64/include/QtGui/qtouchdevice.h \
-		ui_gameoverwidget.h
+		ui_gameoverwidget.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/QVariant \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/QApplication \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qapplication.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qcoreapplication.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qeventloop.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		../../Qt/5.15.2/gcc_64/include/QtGui/qguiapplication.h \
+		../../Qt/5.15.2/gcc_64/include/QtGui/qinputmethod.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/QLabel \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qlabel.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qframe.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/QPushButton \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qpushbutton.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qabstractbutton.h \
+		../../Qt/5.15.2/gcc_64/include/QtGui/qicon.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/QVBoxLayout \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qboxlayout.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qlayout.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qlayoutitem.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qgridlayout.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o gameoverwidget.o gameoverwidget.cpp
 
 gamewidget.o: gamewidget.cpp gamewidget.h \
@@ -2908,7 +2931,23 @@ gamewidget.o: gamewidget.cpp gamewidget.h \
 		enemy.h \
 		../../Qt/5.15.2/gcc_64/include/QtCore/QQueue \
 		../../Qt/5.15.2/gcc_64/include/QtCore/qqueue.h \
-		brickwall.h
+		brickwall.h \
+		ui_gamewidget.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/QVariant \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/QApplication \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qapplication.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qcoreapplication.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qeventloop.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		../../Qt/5.15.2/gcc_64/include/QtGui/qguiapplication.h \
+		../../Qt/5.15.2/gcc_64/include/QtGui/qinputmethod.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/QLabel \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qlabel.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/QVBoxLayout \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qboxlayout.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qlayout.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qlayoutitem.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qgridlayout.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o gamewidget.o gamewidget.cpp
 
 levelscene.o: levelscene.cpp levelscene.h \
@@ -3274,7 +3313,59 @@ mainwidget.o: mainwidget.cpp mainwidget.h \
 		../../Qt/5.15.2/gcc_64/include/QtCore/qfiledevice.h \
 		../../Qt/5.15.2/gcc_64/include/QtGui/qvector2d.h \
 		../../Qt/5.15.2/gcc_64/include/QtGui/qtouchdevice.h \
-		ui_mainwidget.h
+		ui_mainwidget.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/QVariant \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/QApplication \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qapplication.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qcoreapplication.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qeventloop.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		../../Qt/5.15.2/gcc_64/include/QtGui/qguiapplication.h \
+		../../Qt/5.15.2/gcc_64/include/QtGui/qinputmethod.h \
+		gameoverwidget.h \
+		gamewidget.h \
+		player.h \
+		tank.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/QObject \
+		square.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/QGraphicsObject \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qgraphicsitem.h \
+		../../Qt/5.15.2/gcc_64/include/QtGui/qpainterpath.h \
+		../../Qt/5.15.2/gcc_64/include/QtGui/QPainter \
+		../../Qt/5.15.2/gcc_64/include/QtGui/qpainter.h \
+		../../Qt/5.15.2/gcc_64/include/QtGui/qtextoption.h \
+		../../Qt/5.15.2/gcc_64/include/QtGui/qpen.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/QtMath \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qmath.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/QDebug \
+		../../Qt/5.15.2/gcc_64/include/QtCore/QTimer \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qtimer.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qbasictimer.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/QGraphicsScene \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qgraphicsscene.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/QGraphicsView \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qgraphicsview.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qscrollarea.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qframe.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/QDir \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qdir.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qfileinfo.h \
+		bullet.h \
+		steelwall.h \
+		../../Qt/5.15.2/gcc_64/include/QtGui/QKeyEvent \
+		powerup.h \
+		levelscene.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/QRandomGenerator \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qrandom.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/QDateTime \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qdatetime.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/QSet \
+		enemy.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/QQueue \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qqueue.h \
+		brickwall.h \
+		startwidget.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwidget.o mainwidget.cpp
 
 player.o: player.cpp player.h \
@@ -3782,7 +3873,27 @@ startwidget.o: startwidget.cpp startwidget.h \
 		../../Qt/5.15.2/gcc_64/include/QtCore/qfiledevice.h \
 		../../Qt/5.15.2/gcc_64/include/QtGui/qvector2d.h \
 		../../Qt/5.15.2/gcc_64/include/QtGui/qtouchdevice.h \
-		ui_startwidget.h
+		ui_startwidget.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/QVariant \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/QApplication \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qapplication.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qcoreapplication.h \
+		../../Qt/5.15.2/gcc_64/include/QtCore/qeventloop.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		../../Qt/5.15.2/gcc_64/include/QtGui/qguiapplication.h \
+		../../Qt/5.15.2/gcc_64/include/QtGui/qinputmethod.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/QLabel \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qlabel.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qframe.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/QPushButton \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qpushbutton.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qabstractbutton.h \
+		../../Qt/5.15.2/gcc_64/include/QtGui/qicon.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/QVBoxLayout \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qboxlayout.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qlayout.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qlayoutitem.h \
+		../../Qt/5.15.2/gcc_64/include/QtWidgets/qgridlayout.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o startwidget.o startwidget.cpp
 
 steelwall.o: steelwall.cpp steelwall.h \

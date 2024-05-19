@@ -9,7 +9,7 @@ class Enemy : public Tank
 {
     Q_OBJECT
 public:
-    Enemy(qint8 x, qint8 y, QGraphicsObject *parent = 0);
+    Enemy(qint8 x, qint8 y,QVector<QVector<bool>>* field, QGraphicsObject *parent = 0);
     ~Enemy();
 protected:
     void takeDamage(qint8 damage) override;
