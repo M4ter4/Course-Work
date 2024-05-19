@@ -24,11 +24,25 @@ public:
         LEFT = 180,
         UP = 270
     };
+    struct Cell
+    {
+        qint32 x;
+        qint32 y;
+        Cell(qint32 x = -1, qint32 y = -1){
+            this->x = x;
+            this->y = y;
+        }
+        bool operator==(Cell b){
+            return (x==b.x)&&(y==b.y);
+        }
+        bool operator!=(Cell b){
+            return !(*this==b);
+        }
+    };
     static Direction getOpposite(Direction dir);
     Square(qint8 x, qint8 y, QGraphicsObject *parent = 0);
     ~Square();
-    qint8 getCellX();
-    qint8 getCellY();
+    Square::Cell getCell();
 protected:
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

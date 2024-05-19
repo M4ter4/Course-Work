@@ -14,7 +14,7 @@ public:
 private:
     qint8 hp = 3;
 signals:
-    void onDeath(qint8, qint8);
+    void onDeath(Square::Cell cell);
 };
 
 #endif // BRICKWALL_H

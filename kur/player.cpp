@@ -1,19 +1,24 @@
 #include "player.h"
 
-Player::Player(qint8 x, qint8 y, QGraphicsObject *parent) : Tank(x, y, parent) {
-    QPixmap map(QDir::current().filePath("resources/player.jpg"));
+Player::Player(qint8 x, qint8 y, QGraphicsObject *parent) : Tank(x, y, parent), currentCell(getCell().x, getCell().y) {
+    QPixmap map(QDir::current().filePath("resources/player.png"));
     this->pixmap = map;
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Player::moveTimerTimeout);
     timer->start(10);
     hp = maxhp;
-    currentCellX = getCellX();
-    currentCellY = getCellY();
+    ghostTimer = new QTimer(this);
+    ghostTimer->setSingleShot(true);
+    connect(ghostTimer, &QTimer::timeout, this, &Player::ghostTimerTimeout);
 }
 Player::~Player(){}
 
 void Player::shoot(qint8 damage){
     if(isShootEnabled){
+        if (isDoubleDamage){
+            isDoubleDamage = false;
+            damage *= 2;
+        }
         this->Tank::shoot(damage);
         isShootEnabled = false;
         reloadTimer->start();
@@ -26,12 +31,33 @@ void Player::move(qint64 stepSize)
     double radians = qDegreesToRadians((double)direction);
     foreach(auto item, scene()->collidingItems(this)){
         if(Tank *tank = dynamic_cast<Tank*>(item)){
+            if (!isGhost)
             this->setPos(this->x() - stepSize*qCos(radians), this->y() - stepSize*qSin(radians));
         }
-        if(SteelWall *wall = dynamic_cast<SteelWall*>(item)){
+        else if(SteelWall *wall = dynamic_cast<SteelWall*>(item)){
+            if (!isGhost)
             this->setPos(this->x() - stepSize*qCos(radians), this->y() - stepSize*qSin(radians));
+        }
+        else if(PowerUp *powerup = dynamic_cast<PowerUp*>(item)){
+            powerup->deleteLater();
+            PowerUp::Type type = powerup->getType();
+            if (type == PowerUp::HEAL){
+                hp = maxhp;
+            }
+            else if (type == PowerUp::DOUBLEDAMAGE){
+                isDoubleDamage = true;
+            }
+            else{
+                isGhost = true;
+                ghostTimer->start(5000);
+            }
         }
     }
+}
+
+bool Player::isInGhostForm()
+{
+    return isGhost;
 }
 
 void Player::keyPressEvent(QKeyEvent* e){
@@ -76,6 +102,17 @@ void Player::keyReleaseEvent(QKeyEvent* e){
     }
 }
 
+void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    if (isGhost){
+        painter->setOpacity(0.25);
+    }
+    else{
+        painter->setOpacity(1);
+    }
+    Tank::paint(painter, option, widget);
+}
+
 void Player::enableMovement(Direction direction){
     if (this->direction == direction){
         this->isMoveEnabled = true;
@@ -89,11 +126,15 @@ void Player::enableMovement(Direction direction){
 void Player::moveTimerTimeout(){
     if(isMoveEnabled){
     this->move(stepSize);
-        if(currentCellX != getCellX() || currentCellY != getCellY()){
-        currentCellX = getCellX();
-        currentCellY = getCellY();
-        emit updatePos(currentCellX, currentCellY);
+        if(currentCell != getCell()){
+        currentCell = getCell();
+        emit updatePos(currentCell);
+        }
     }
-    }
+}
+
+void Player::ghostTimerTimeout()
+{
+    isGhost = false;
 }
 

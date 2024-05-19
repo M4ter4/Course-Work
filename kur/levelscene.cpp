@@ -9,77 +9,144 @@ LevelScene::LevelScene() {
         row.fill(true, 20);
     }
 
-    QFile file(QDir::current().filePath("resources/map1.txt"));
+    QRandomGenerator64 generator(QDateTime::currentDateTime().toMSecsSinceEpoch());
+    int randomNumber;
+    randomNumber = generator.bounded(0, 5);
+    QString mapLocation = "resources/map";
+    mapLocation.append(randomNumber+'0').append(".txt");
+    qDebug() << "add maps";
+
+    QFile file(QDir::current().filePath("resources/test.txt"));//mapLocation));
     file.open(QIODevice::ReadWrite);
     QTextStream s(&file);
 
-    for (int i = 0; i < 20; ++i) {
+    qint8 walls[20][20];
+    for (int y = 0; y < 20; ++y) {
         QString current = s.readLine();
-        for (int j = 0; j < 20; ++j) {
-            walls[i][j] = current.at(j).unicode() - '0';
+        for (int x = 0; x < 20; ++x) {
+            walls[y][x] = current.at(x).unicode() - '0';
         }
     }
 
-    for (qint8 i = 0; i < 20; ++i) {
-        for (qint8 j = 0; j < 20; ++j) {
-            qint8 curr = walls[i][j];
+    for (qint8 y = 0; y < 20; ++y) {
+        for (qint8 x = 0; x < 20; ++x) {
+            qint8 curr = walls[y][x];
             if(curr == 1){
-                SteelWall* wall = new SteelWall(j,i);
+                SteelWall* wall = new SteelWall(x,y);
                 this->addItem(wall);
-                (*field)[i][j] = false;
+                (*field)[y][x] = false;
             }
             if(curr == 2){
-                BrickWall* wall = new BrickWall(j,i);
+                BrickWall* wall = new BrickWall(x,y);
                 this->addItem(wall);
-                (*field)[i][j] = false;
+                (*field)[y][x] = false;
                 connect(wall, &BrickWall::onDeath, this, &LevelScene::onWallDestroy);
             }
         }
     }
 
-    Player* obj = new Player(0,0);
+    qint32 playerX = generator.bounded(0, 20);
+    qint32 playerY = generator.bounded(0, 20);
+    while(!(*field)[playerY][playerX]){
+        playerX = generator.bounded(0, 20);
+        playerY = generator.bounded(0, 20);
+    }
+
+    Player* obj = new Player(playerX,playerY);
     player = obj;
     this->addItem(obj);
     obj->grabKeyboard();
     connect(obj, &Player::updatePos, this, &LevelScene::onPlayerChangeCell);
 
-    Enemy *enemy1 = new Enemy(9,10);
-    enemy1->onPlayerCellUpdate(10, 10);
-    connect(this, &LevelScene::updatePlayerPos, enemy1, &Enemy::onPlayerCellUpdate);
-    connect(this, &LevelScene::updateField, enemy1, &Enemy::onWallDestroy);
-    this->addItem(enemy1);
-    Enemy *enemy2 = new Enemy(8,10);
-    enemy2->onPlayerCellUpdate(10, 10);
-    connect(this, &LevelScene::updatePlayerPos, enemy2, &Enemy::onPlayerCellUpdate);
-    connect(this, &LevelScene::updateField, enemy2, &Enemy::onWallDestroy);
-    this->addItem(enemy2);
-    Enemy *enemy3 = new Enemy(7,10);
-    enemy3->onPlayerCellUpdate(10, 10);
-    connect(this, &LevelScene::updatePlayerPos, enemy3, &Enemy::onPlayerCellUpdate);
-    connect(this, &LevelScene::updateField, enemy3, &Enemy::onWallDestroy);
-    this->addItem(enemy3);
+    QList<Square::Cell> freePoints;
+    for (qint8 y = 0; y < 20; ++y) {
+        for (qint8 x = 0; x < 20; ++x) {
+            if((*field)[y][x]){
+                Square::Cell point(x,y);
+                if(x != playerX && y != playerY){
+                    freePoints.append(point);
+                }
+            }
+        }
+    }
+
+    QSet<qint32> set;
+    qint32 count=3, left=0, right=freePoints.size();
+    while(set.size() < count){
+        qint32 randomNumber;
+        randomNumber = generator.bounded(left, right);
+        set.insert(randomNumber);
+    }
+
+    foreach (auto i, set) {
+        Square::Cell p = freePoints.at(i);
+        Enemy *enemy = new Enemy(p.x,p.y);
+        enemy->onPlayerCellUpdate(Square::Cell(playerX, playerY));
+        connect(this, &LevelScene::updatePlayerPos, enemy, &Enemy::onPlayerCellUpdate);
+        connect(this, &LevelScene::updateField, enemy, &Enemy::onWallDestroy);
+        this->addItem(enemy);
+    }
     emit updateField(field);
+
+    powerUpTimer = new QTimer();
+    connect(powerUpTimer, &QTimer::timeout, this, &LevelScene::onPowerUpTimeout);
+    powerUpTimer->start(15000);
 }
 
 LevelScene::~LevelScene(){}
-
-QVector<Enemy> *LevelScene::getEnemies()
-{
-    return enemies;
-}
 
 Player* LevelScene::getPlayer()
 {
     return player;
 }
 
-void LevelScene::onWallDestroy(qint8 x, qint8 y)
+void LevelScene::onPowerUpTimeout()
 {
-    (*field)[y][x] = true;
-    emit updateField(field);
+    QList<Square::Cell> freePoints;
+
+    for (qint8 y = 0; y < 20; ++y) {
+        for (qint8 x = 0; x < 20; ++x) {
+            Square::Cell cell(x, y);
+            if ((*field)[y][x]){
+                freePoints.append(cell);
+            }
+        }
+    }
+
+    foreach(auto item, this->items()){
+        if(Tank *tank = dynamic_cast<Tank*>(item)){
+            for(qint8 y = tank->getCell().y - 1; y <= tank->getCell().y + 1; ++y){
+                for(qint8 x = tank->getCell().x - 1; x <= tank->getCell().x + 1; ++x){
+                    Square::Cell cell(x, y);
+                    if (freePoints.contains(cell)){
+                        freePoints.removeOne(cell);
+                    }
+                }
+            }
+        }
+    }
+
+    if(freePoints.size() == 0){
+        return;
+    }
+
+    QRandomGenerator64 generator(QDateTime::currentDateTime().toMSecsSinceEpoch()/2);
+    int randomNumber;
+    randomNumber = generator.bounded(0, freePoints.size());
+    Square::Cell freePoint = freePoints.at(randomNumber);
+
+    PowerUp *pup = new PowerUp(freePoint.x, freePoint.y);
+    this->addItem(pup);
 }
 
-void LevelScene::onPlayerChangeCell(qint8 x, qint8 y)
+void LevelScene::onWallDestroy(Square::Cell cell)
 {
-    emit updatePlayerPos(x, y);
+    (*field)[cell.y][cell.x] = true;
+    emit updateField(field);
+
+}
+
+void LevelScene::onPlayerChangeCell(Square::Cell cell)
+{
+    emit updatePlayerPos(cell);
 }

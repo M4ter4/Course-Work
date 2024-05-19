@@ -21,7 +21,8 @@ Square::Direction Tank::getDirection(){
 
 QRectF Tank::boundingRect() const
 {
-    return QRectF(-18,-18,36,36);
+    //return QRectF(-18,-18,36,36);
+    return QRectF(-15,-15,30,30);
 }
 
 void Tank::shoot(qint8 damage){
@@ -43,26 +44,18 @@ void Tank::move(qint64 stepSize){
     }
     double radians = qDegreesToRadians((double)direction);
     this->setPos(this->x() + stepSize*qCos(radians), this->y() + stepSize*qSin(radians));
-    if(qRound64(x())>780){
+    if(qRound64(x())>(800-boundingRect().width()/2)){
         this->setPos(this->x() - stepSize, this->y());
     }
-    if(qRound64(x())<20){
+    if(qRound64(x())<boundingRect().width()/2){
         this->setPos(this->x() + stepSize, this->y());
     }
-    if(qRound64(y())>780){
+    if(qRound64(y())>(800-boundingRect().height()/2)){
         this->setPos(this->x(), this->y() - stepSize);
     }
-    if(qRound64(y())<20){
+    if(qRound64(y())<boundingRect().height()/2){
         this->setPos(this->x(), this->y() + stepSize);
     }
-    // foreach(auto item, scene()->collidingItems(this)){
-    //     if(Tank *tank = dynamic_cast<Tank*>(item)){
-    //         this->setPos(this->x() - stepSize*qCos(radians), this->y() - stepSize*qSin(radians));
-    //     }
-    //     if(SteelWall *wall = dynamic_cast<SteelWall*>(item)){
-    //         this->setPos(this->x() - stepSize*qCos(radians), this->y() - stepSize*qSin(radians));
-    //     }
-    // }
 }
 
 void Tank::takeDamage(qint8 damage){
@@ -74,12 +67,6 @@ void Tank::takeDamage(qint8 damage){
 }
 
 void Tank::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
-    QRectF boundingRect = this->boundingRect();
-    // QPolygonF polygon;
-    // polygon.append(boundingRect.topLeft());
-    // polygon.append(QPointF(boundingRect.center().x(), boundingRect.top()));
-    // polygon.append(QPointF(boundingRect.right(), boundingRect.center().x()));
-    // polygon.append(QPointF(boundingRect.center().x(), boundingRect.bottom()));
     // polygon.append(boundingRect.bottomLeft());
     this->setRotation(direction);
     this->Square::paint(painter, option, widget);

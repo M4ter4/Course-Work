@@ -1,5 +1,6 @@
 #include "brickwall.h"
 #include "bullet.h"
+#include "player.h"
 #include "steelwall.h"
 #include "tank.h"
 
@@ -30,15 +31,21 @@ void Bullet::move(){
     double radians = qDegreesToRadians((double)direction);
     this->setPos(this->x() + 15*qCos(radians), this->y() + 15*qSin(radians));
     foreach(auto item, scene()->collidingItems(this)){
-        if(Tank *tank = dynamic_cast<Tank*>(item)){
+        if(Player *player = dynamic_cast<Player*>(item)){
+            if(!player->isInGhostForm()){
+                player->takeDamage(damage);
+                deleteLater();
+            }
+        }
+        else if(Tank *tank = dynamic_cast<Tank*>(item)){
             tank->takeDamage(damage);
             deleteLater();
         }
-        if(BrickWall *wall = dynamic_cast<BrickWall*>(item)){
+        else if(BrickWall *wall = dynamic_cast<BrickWall*>(item)){
             wall->takeDamage(damage);
             deleteLater();
         }
-        if(SteelWall *wall = dynamic_cast<SteelWall*>(item)){
+        else if(SteelWall *wall = dynamic_cast<SteelWall*>(item)){
             deleteLater();
         }
     }

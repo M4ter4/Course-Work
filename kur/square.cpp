@@ -19,14 +19,9 @@ Square::Square(qint8 x, qint8 y, QGraphicsObject *parent) : QGraphicsObject(pare
 
 Square::~Square(){}
 
-qint8 Square::getCellX()
+Square::Cell Square::getCell()
 {
-    return (qRound(x()))/40;
-}
-
-qint8 Square::getCellY()
-{
-    return (qRound(y()))/40;
+    return Cell((qRound(x()))/40, (qRound(y()))/40);
 }
 
 QRectF Square::boundingRect() const
@@ -36,7 +31,6 @@ QRectF Square::boundingRect() const
 
 void Square::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    //this->setPos(200,200);
     painter->drawPixmap(this->boundingRect(), this->pixmap, QRectF(0,0,this->boundingRect().x(),this->boundingRect().y()));
 }
 

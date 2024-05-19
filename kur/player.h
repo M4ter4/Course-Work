@@ -4,6 +4,7 @@
 #include "tank.h"
 #include <QKeyEvent>
 #include <QTimer>
+#include "powerup.h"
 
 class Player : public Tank
 {
@@ -14,21 +15,24 @@ public:
     void enableMovement(Direction direction);
     void shoot(qint8 damage) override;
     void move(qint64 stepSize) override;
+    bool isInGhostForm();
 protected:
-    const qint8 maxhp = 10;
+    const qint8 maxhp = 100;
     void keyPressEvent(QKeyEvent* e) override;
     void keyReleaseEvent(QKeyEvent* e) override;
-
-
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 private:
     bool isMoveEnabled = false;
-    qint8 currentCellX;
-    qint8 currentCellY;
+    Square::Cell currentCell;
     qint64 stepSize = 4;
+    bool isDoubleDamage = false;
+    bool isGhost = false;
+    QTimer *ghostTimer;
 private slots:
     void moveTimerTimeout();
+    void ghostTimerTimeout();
 signals:
-    void updatePos(qint8 x, qint8 y);
+    void updatePos(Square::Cell cell);
 };
 
 #endif // PLAYER_H

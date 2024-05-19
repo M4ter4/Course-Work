@@ -1,7 +1,7 @@
 #include "enemy.h"
 
 Enemy::Enemy(qint8 x, qint8 y, QGraphicsObject *parent) : Tank(x, y, parent) {
-    QPixmap map(QDir::current().filePath("resources/enemy.jpg"));
+    QPixmap map(QDir::current().filePath("resources/enemy.png"));
     this->rotate(Square::RIGHT);
     this->pixmap = map;
     tickTimer = new QTimer();
@@ -26,7 +26,7 @@ void Enemy::move(qint64 stepSize)
         if(Tank *tank = dynamic_cast<Tank*>(item)){
             this->setPos(this->x() - stepSize*qCos(radians), this->y() - stepSize*qSin(radians));
         }
-        if(SteelWall *wall = dynamic_cast<SteelWall*>(item)){
+        else if(SteelWall *wall = dynamic_cast<SteelWall*>(item)){
             this->setPos(this->x() - stepSize*qCos(radians), this->y() - stepSize*qSin(radians));
         }
     }
@@ -37,12 +37,9 @@ void Enemy::onWallDestroy(QVector<QVector<bool> > *field)
     this->field = field;
 }
 
-void Enemy::onPlayerCellUpdate(qint8 x, qint8 y)
+void Enemy::onPlayerCellUpdate(Cell cell)
 {
-    Enemy::Point point;
-    point.x = x;
-    point.y = y;
-    this->playerCell = point;
+    this->playerCell = cell;
 }
 
 void Enemy::tick(){
@@ -53,9 +50,7 @@ void Enemy::tick(){
         }
     }
     if(qRound64(x())%40 == 20 && qRound64(y())%40 == 20){
-        Enemy::Point point;
-        point.x = getCellX();
-        point.y = getCellY();
+        Square::Cell point(getCell().x, getCell().y);
         turnTo = findShortestPath(*field, point, playerCell, enemies);
         if (turnTo == NONE){
             turnTo = findShortestPath(*field, point, playerCell);
@@ -67,58 +62,57 @@ void Enemy::tick(){
     }
     move(stepSize);
     double radians = qDegreesToRadians((double)direction);
-    qint8 currentCellX = getCellX();
-    qint8 currentCellY = getCellY();
+    Square::Cell currentCell = getCell();
     bool noObstacles = true;
     while(true){
-        currentCellX += qRound(qCos(radians));
-        currentCellY += qRound(qSin(radians));
-        if(currentCellX < 0 || currentCellX > 19 || currentCellY < 0 || currentCellY > 19){
+        currentCell.x += qRound(qCos(radians));
+        currentCell.y += qRound(qSin(radians));
+        if(currentCell.x < 0 || currentCell.x > 19 || currentCell.y < 0 || currentCell.y > 19){
             break;
         }
-        if(playerCell.x == currentCellX && playerCell.y == currentCellY && noObstacles){
+        if(playerCell.x == currentCell.x && playerCell.y == currentCell.y && noObstacles){
             shoot(1);
         }
         foreach (auto enemy, enemies) {
-            if(enemy->getCellX() == currentCellX && enemy->getCellY() == currentCellY){
+            if(enemy->getCell().x == currentCell.x && enemy->getCell().y == currentCell.y){
                 noObstacles = false;
             }
         }
 
-        if (!(*field)[currentCellY][currentCellX]){
+        if (!(*field)[currentCell.y][currentCell.x]){
             noObstacles = false;
         }
     }
 }
 
-bool Enemy::isValidSquare(const QVector<QVector<bool>> &field, int x, int y)
+bool Enemy::isValidSquare(const QVector<QVector<bool>> &field, Square::Cell cell)
 {
-    return x >= 0 && x < field.size() && y >= 0 && y < field[0].size() && (field[y][x] == true);
+    return cell.x >= 0 && cell.x < field.size() && cell.y >= 0 && cell.y < field[0].size() && (field[cell.y][cell.x] == true);
 }
 
-bool Enemy::isValidSquare(const QVector<QVector<bool> > &field, int x, int y, QList<Enemy *> enemies)
+bool Enemy::isValidSquare(const QVector<QVector<bool> > &field, Square::Cell cell, QList<Enemy *> enemies)
 {
     foreach (auto enemy, enemies) {
-        if (enemy->getCellX() == x && enemy->getCellY() == y){
+        if (enemy->getCell().x == cell.x && enemy->getCell().y == cell.y){
             return false;
         }
     }
-    return x >= 0 && x < field.size() && y >= 0 && y < field[0].size() && (field[y][x] == true);
+    return isValidSquare(field, cell);
 }
 
-Square::Direction Enemy::findShortestPath(const QVector<QVector<bool> > &field, Point start, Point end)
+Square::Direction Enemy::findShortestPath(const QVector<QVector<bool> > &field,Square::Cell start, Square::Cell end)
 {
 
 
     // qDebug() << start.x << " -start-" << start.y;
     // qDebug() << end.x << " -end-" << end.y;
-    QQueue<Point> queue;
+    QQueue<Square::Cell> queue;
 
     // Массив для хранения пройденных точек
     QVector<QVector<bool>> visited(field.size(), QVector<bool>(field[0].size(), false));
 
     // Массив для хранения предков каждой точки
-    QVector<QVector<Point>> parents(field.size(), QVector<Point>(field[0].size(), {-1, -1}));
+    QVector<QVector<Square::Cell>> parents(field.size(), QVector<Square::Cell>(field[0].size(), {-1, -1}));
 
     // Добавляем начальную точку в очередь
     queue.append(start);
@@ -126,13 +120,13 @@ Square::Direction Enemy::findShortestPath(const QVector<QVector<bool> > &field, 
     // Пока очередь не пуста
     while (!queue.empty()) {
         // Извлекаем следующую точку из очереди
-        Point current = queue.front();
+        Square::Cell current = queue.front();
         queue.pop_front();
 
         // Проверяем, достигли ли мы конечной точки
         if (current.x == end.x && current.y == end.y) {
             // Восстанавливаем кратчайший путь, двигаясь по предкам
-            QVector<Point> path;
+            QVector<Square::Cell> path;
 
             while (current.x != -1 && current.y != -1) {
                 path.push_back(current);
@@ -152,15 +146,15 @@ Square::Direction Enemy::findShortestPath(const QVector<QVector<bool> > &field, 
             }
         }
 
-        QVector<Point> neighbors = {
+        QVector<Square::Cell> neighbors = {
             {current.x - 1, current.y},
             {current.x + 1, current.y},
             {current.x, current.y - 1},
             {current.x, current.y + 1}
         };
 
-        for (const Point& neighbor : neighbors) {
-            if (isValidSquare(field, neighbor.x, neighbor.y) && !visited[neighbor.y][neighbor.x]) {
+        for (const Square::Cell& neighbor : neighbors) {
+            if (isValidSquare(field, neighbor) && !visited[neighbor.y][neighbor.x]) {
                 queue.append(neighbor);
                 visited[neighbor.y][neighbor.x] = true;
                 parents[neighbor.y][neighbor.x] = current;
@@ -170,15 +164,15 @@ Square::Direction Enemy::findShortestPath(const QVector<QVector<bool> > &field, 
     return Direction::NONE;
 }
 
-Square::Direction Enemy::findShortestPath(const QVector<QVector<bool> > &field, Point start, Point end, QList<Enemy *> enemies)
+Square::Direction Enemy::findShortestPath(const QVector<QVector<bool> > &field, Square::Cell start, Square::Cell end, QList<Enemy *> enemies)
 {
-    QQueue<Point> queue;
+    QQueue<Square::Cell> queue;
 
     // Массив для хранения пройденных точек
     QVector<QVector<bool>> visited(field.size(), QVector<bool>(field[0].size(), false));
 
     // Массив для хранения предков каждой точки
-    QVector<QVector<Point>> parents(field.size(), QVector<Point>(field[0].size(), {-1, -1}));
+    QVector<QVector<Square::Cell>> parents(field.size(), QVector<Square::Cell>(field[0].size(), {-1, -1}));
 
     // Добавляем начальную точку в очередь
     queue.append(start);
@@ -186,13 +180,13 @@ Square::Direction Enemy::findShortestPath(const QVector<QVector<bool> > &field, 
     // Пока очередь не пуста
     while (!queue.empty()) {
         // Извлекаем следующую точку из очереди
-        Point current = queue.front();
+        Square::Cell current = queue.front();
         queue.pop_front();
 
         // Проверяем, достигли ли мы конечной точки
         if (current.x == end.x && current.y == end.y) {
             // Восстанавливаем кратчайший путь, двигаясь по предкам
-            QVector<Point> path;
+            QVector<Square::Cell> path;
 
             while (current.x != -1 && current.y != -1) {
                 path.push_back(current);
@@ -214,15 +208,15 @@ Square::Direction Enemy::findShortestPath(const QVector<QVector<bool> > &field, 
         }
 
         // Иначе добавляем в очередь соседние точки
-        QVector<Point> neighbors = {
+        QVector<Square::Cell> neighbors = {
             {current.x - 1, current.y},
             {current.x + 1, current.y},
             {current.x, current.y - 1},
             {current.x, current.y + 1}
         };
 
-        for (const Point& neighbor : neighbors) {
-            if (isValidSquare(field, neighbor.x, neighbor.y, enemies) && !visited[neighbor.y][neighbor.x]) {
+        for (const Square::Cell& neighbor : neighbors) {
+            if (isValidSquare(field, neighbor, enemies) && !visited[neighbor.y][neighbor.x]) {
                 queue.append(neighbor);
                 visited[neighbor.y][neighbor.x] = true;
                 parents[neighbor.y][neighbor.x] = current;

@@ -15,7 +15,7 @@ void BrickWall::takeDamage(qint8 damage)
 {
     hp-=damage;
     if(hp <= 0){
-        emit onDeath(this->x, this->y);
+        emit onDeath(this->getCell());
         this->deleteLater();
     }
 }

@@ -16,21 +16,17 @@ protected:
     QTimer *tickTimer;
 public slots:
     void onWallDestroy(QVector<QVector<bool>>* field);
-    void onPlayerCellUpdate(qint8 x, qint8 y);
+    void onPlayerCellUpdate(Square::Cell cell);
 private slots:
     void tick();
 private:
      qint64 stepSize = 2;
-    struct Point {
-        int x;
-        int y;
-    };
-    Point playerCell;
+    Square::Cell playerCell;
     QVector<QVector<bool>>* field;
-    bool isValidSquare(const QVector<QVector<bool>>& field, int x, int y);
-    bool isValidSquare(const QVector<QVector<bool>>& field, int x, int y, QList<Enemy*> enemies);
-    Square::Direction findShortestPath(const QVector<QVector<bool>>& field, Point start, Point end);
-    Square::Direction findShortestPath(const QVector<QVector<bool>>& field, Point start, Point end, QList<Enemy*> enemies);
+    bool isValidSquare(const QVector<QVector<bool>>& field, Square::Cell cell);
+    bool isValidSquare(const QVector<QVector<bool>>& field, Square::Cell cell, QList<Enemy*> enemies);
+    Square::Direction findShortestPath(const QVector<QVector<bool>>& field, Square::Cell start, Square::Cell end);
+    Square::Direction findShortestPath(const QVector<QVector<bool>>& field, Square::Cell start, Square::Cell end, QList<Enemy*> enemies);
     Square::Direction turnTo;
 };
 

@@ -12,27 +12,38 @@ SOURCES += \
     brickwall.cpp \
     bullet.cpp \
     enemy.cpp \
+    gameoverwidget.cpp \
+    gamewidget.cpp \
     levelscene.cpp \
     main.cpp \
+    mainwidget.cpp \
     player.cpp \
+    powerup.cpp \
     square.cpp \
+    startwidget.cpp \
     steelwall.cpp \
-    tank.cpp \
-    widget.cpp
+    tank.cpp
 
 HEADERS += \
     brickwall.h \
     bullet.h \
     enemy.h \
+    gameoverwidget.h \
+    gamewidget.h \
     levelscene.h \
+    mainwidget.h \
     player.h \
+    powerup.h \
     square.h \
+    startwidget.h \
     steelwall.h \
-    tank.h \
-    widget.h
+    tank.h
 
 FORMS += \
-    widget.ui
+    gameoverwidget.ui \
+    gamewidget.ui \
+    mainwidget.ui \
+    startwidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
