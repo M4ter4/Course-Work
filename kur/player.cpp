@@ -13,13 +13,12 @@ Player::Player(qint8 x, qint8 y, QGraphicsObject *parent) : Tank(x, y, parent), 
 }
 Player::~Player(){}
 
-void Player::shoot(qint8 damage){
+void Player::shoot(bool isDD){
     if(isShootEnabled){
+        this->Tank::shoot(isDoubleDamage);
         if (isDoubleDamage){
             isDoubleDamage = false;
-            damage *= 2;
         }
-        this->Tank::shoot(damage);
         isShootEnabled = false;
         reloadTimer->start();
     }
@@ -43,6 +42,7 @@ void Player::move(qint64 stepSize)
             PowerUp::Type type = powerup->getType();
             if (type == PowerUp::HEAL){
                 hp = maxhp;
+                emit changePlayerHP(hp);
             }
             else if (type == PowerUp::DOUBLEDAMAGE){
                 isDoubleDamage = true;
@@ -74,7 +74,7 @@ void Player::keyPressEvent(QKeyEvent* e){
         this->enableMovement(Square::UP);
     }
     if(e->key() == Qt::Key_Space){
-        this->shoot(1);
+        this->shoot();
     }
     update();
 }
@@ -120,6 +120,19 @@ void Player::enableMovement(Direction direction){
     else {
         this->rotate(direction);
         this->isMoveEnabled = false;
+    }
+    // if (this->direction != direction){
+    //     this->rotate(direction);
+    // }
+    // this->isMoveEnabled = true;
+}
+
+void Player::takeDamage(qint8 damage)
+{
+    Tank::takeDamage(damage);
+    emit changePlayerHP(hp);
+    if(hp <= 0){
+        emit onPlayerDeathSignal();
     }
 }
 

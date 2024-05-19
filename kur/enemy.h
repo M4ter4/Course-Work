@@ -7,11 +7,12 @@
 #include "tank.h"
 class Enemy : public Tank
 {
-
+    Q_OBJECT
 public:
     Enemy(qint8 x, qint8 y, QGraphicsObject *parent = 0);
     ~Enemy();
 protected:
+    void takeDamage(qint8 damage) override;
     void move(qint64 stepSize) override;
     QTimer *tickTimer;
 public slots:
@@ -28,6 +29,8 @@ private:
     Square::Direction findShortestPath(const QVector<QVector<bool>>& field, Square::Cell start, Square::Cell end);
     Square::Direction findShortestPath(const QVector<QVector<bool>>& field, Square::Cell start, Square::Cell end, QList<Enemy*> enemies);
     Square::Direction turnTo;
+signals:
+    void enemyDeathSignal();
 };
 
 #endif // ENEMY_H

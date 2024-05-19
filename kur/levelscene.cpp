@@ -1,7 +1,8 @@
 #include "levelscene.h"
 
-LevelScene::LevelScene() {
+LevelScene::LevelScene(qint8 difficulty) {
     this->setBackgroundBrush(QBrush(Qt::black));
+
 
     field = new QVector<QVector<bool>>(20);
 
@@ -14,9 +15,7 @@ LevelScene::LevelScene() {
     randomNumber = generator.bounded(0, 5);
     QString mapLocation = "resources/map";
     mapLocation.append(randomNumber+'0').append(".txt");
-    qDebug() << "add maps";
-
-    QFile file(QDir::current().filePath("resources/test.txt"));//mapLocation));
+    QFile file(QDir::current().filePath(mapLocation));
     file.open(QIODevice::ReadWrite);
     QTextStream s(&file);
 
@@ -53,10 +52,11 @@ LevelScene::LevelScene() {
     }
 
     Player* obj = new Player(playerX,playerY);
-    player = obj;
     this->addItem(obj);
     obj->grabKeyboard();
     connect(obj, &Player::updatePos, this, &LevelScene::onPlayerChangeCell);
+    connect(obj, &Player::onPlayerDeathSignal, this, &LevelScene::onPlayerDeathSlot);
+    connect(obj, &Player::changePlayerHP, this, &LevelScene::changePlayerHPSlot);
 
     QList<Square::Cell> freePoints;
     for (qint8 y = 0; y < 20; ++y) {
@@ -71,8 +71,8 @@ LevelScene::LevelScene() {
     }
 
     QSet<qint32> set;
-    qint32 count=3, left=0, right=freePoints.size();
-    while(set.size() < count){
+    qint32 left=0, right=freePoints.size();
+    while(set.size() < difficulty+1){
         qint32 randomNumber;
         randomNumber = generator.bounded(left, right);
         set.insert(randomNumber);
@@ -84,21 +84,19 @@ LevelScene::LevelScene() {
         enemy->onPlayerCellUpdate(Square::Cell(playerX, playerY));
         connect(this, &LevelScene::updatePlayerPos, enemy, &Enemy::onPlayerCellUpdate);
         connect(this, &LevelScene::updateField, enemy, &Enemy::onWallDestroy);
+        connect(enemy, &Enemy::enemyDeathSignal, this, &LevelScene::onEnemyDeathSlot);
         this->addItem(enemy);
+        ++currentEnemiesCount;
     }
+
     emit updateField(field);
 
     powerUpTimer = new QTimer();
     connect(powerUpTimer, &QTimer::timeout, this, &LevelScene::onPowerUpTimeout);
-    powerUpTimer->start(15000);
+    powerUpTimer->start(10000 + 5000*(difficulty-1));
 }
 
 LevelScene::~LevelScene(){}
-
-Player* LevelScene::getPlayer()
-{
-    return player;
-}
 
 void LevelScene::onPowerUpTimeout()
 {
@@ -149,4 +147,24 @@ void LevelScene::onWallDestroy(Square::Cell cell)
 void LevelScene::onPlayerChangeCell(Square::Cell cell)
 {
     emit updatePlayerPos(cell);
+}
+
+void LevelScene::onEnemyDeathSlot()
+{
+    --currentEnemiesCount;
+    emit enemyDeathSignal();
+    if(currentEnemiesCount <= 0){
+        emit nextRoundSignal();
+    }
+}
+
+void LevelScene::onPlayerDeathSlot()
+{
+    qDebug() << "Game over";
+    emit gameOverSignal();
+}
+
+void LevelScene::changePlayerHPSlot(qint8 hp)
+{
+    emit changePlayerHP(hp);
 }

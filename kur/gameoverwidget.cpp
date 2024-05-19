@@ -12,3 +12,9 @@ GameOverWidget::~GameOverWidget()
 {
     delete ui;
 }
+
+void GameOverWidget::on_pushButton_clicked()
+{
+    emit restartGameSignal();
+}
+

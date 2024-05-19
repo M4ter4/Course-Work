@@ -12,12 +12,13 @@ PowerUp::PowerUp(qint8 x, qint8 y, QGraphicsObject *parent) : Square(x, y, paren
         pixmap = QPixmap(QDir::current().filePath("resources/heal.png"));
     }
     else if(generatedNum < 90){
-        type = DOUBLEDAMAGE;
-        pixmap = QPixmap(QDir::current().filePath("resources/doubledamage.png"));
-    }
-    else{
         type = GHOST;
         pixmap = QPixmap(QDir::current().filePath("resources/ghost.png"));
+    }
+    else{
+        type = DOUBLEDAMAGE;
+        pixmap = QPixmap(QDir::current().filePath("resources/doubledamage.png"));
+
     }
 }
 

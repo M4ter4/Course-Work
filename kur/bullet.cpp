@@ -4,13 +4,13 @@
 #include "steelwall.h"
 #include "tank.h"
 
-Bullet::Bullet(qreal x0, qreal y0, Direction direction, qint8 damage, QGraphicsObject *parent) : Square(x0, y0, parent) {
+Bullet::Bullet(qreal x0, qreal y0, Direction direction, bool isDD, QGraphicsObject *parent) : Square(x0, y0, parent) {
     double radians = qDegreesToRadians((double)direction);
     this->setRotation(direction);
     this->setPos(x0 + 22*qCos(radians), y0 + 22*qSin(radians));
 
     this->direction = direction;
-    this->damage = damage;
+    this->isDD = isDD;
     QTimer *moveTimer = new QTimer(this);
     connect(moveTimer, &QTimer::timeout, this, &Bullet::move);
     moveTimer->start(10);
@@ -33,20 +33,37 @@ void Bullet::move(){
     foreach(auto item, scene()->collidingItems(this)){
         if(Player *player = dynamic_cast<Player*>(item)){
             if(!player->isInGhostForm()){
-                player->takeDamage(damage);
+                if(isDD){
+                    player->takeDamage(2);
+                }
+                else{
+                player->takeDamage(1);
                 deleteLater();
+                }
             }
         }
         else if(Tank *tank = dynamic_cast<Tank*>(item)){
-            tank->takeDamage(damage);
-            deleteLater();
+            if(isDD){
+                tank->takeDamage(2);
+            }
+            else{
+                tank->takeDamage(1);
+                deleteLater();
+            }
         }
         else if(BrickWall *wall = dynamic_cast<BrickWall*>(item)){
-            wall->takeDamage(damage);
-            deleteLater();
+            if(isDD){
+                wall->takeDamage(2);
+            }
+            else{
+                wall->takeDamage(1);
+                deleteLater();
+            }
         }
         else if(SteelWall *wall = dynamic_cast<SteelWall*>(item)){
+            if(!isDD){
             deleteLater();
+            }
         }
     }
     if(this->x()>810){

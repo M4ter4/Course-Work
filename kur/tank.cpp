@@ -25,9 +25,9 @@ QRectF Tank::boundingRect() const
     return QRectF(-15,-15,30,30);
 }
 
-void Tank::shoot(qint8 damage){
+void Tank::shoot(bool isDD){
     if(isShootEnabled){
-        Bullet *bullet = new Bullet(this->x(), this->y(), this->direction, damage);
+        Bullet *bullet = new Bullet(this->x(), this->y(), this->direction, isDD);
         scene()->addItem(bullet);
         isShootEnabled = false;
         reloadTimer->start();
@@ -61,13 +61,11 @@ void Tank::move(qint64 stepSize){
 void Tank::takeDamage(qint8 damage){
     this->hp -= damage;
     if (hp <= 0){
-        qDebug() << "ADD SIGNAL EMITTING";
         deleteLater();
     }
 }
 
 void Tank::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
-    // polygon.append(boundingRect.bottomLeft());
     this->setRotation(direction);
     this->Square::paint(painter, option, widget);
 }

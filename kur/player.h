@@ -13,11 +13,12 @@ public:
     Player(qint8 x, qint8 y, QGraphicsObject *parent = 0);
     ~Player();
     void enableMovement(Direction direction);
-    void shoot(qint8 damage) override;
+    void takeDamage(qint8 damage) override;
+    void shoot(bool isDD = false) override;
     void move(qint64 stepSize) override;
     bool isInGhostForm();
 protected:
-    const qint8 maxhp = 100;
+    const qint8 maxhp = 10;
     void keyPressEvent(QKeyEvent* e) override;
     void keyReleaseEvent(QKeyEvent* e) override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -33,6 +34,8 @@ private slots:
     void ghostTimerTimeout();
 signals:
     void updatePos(Square::Cell cell);
+    void changePlayerHP(qint8 hp);
+    void onPlayerDeathSignal();
 };
 
 #endif // PLAYER_H

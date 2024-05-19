@@ -16,8 +16,8 @@ public:
     ~Tank();
     void rotate(Direction direction);
     virtual void move(qint64 stepSize);
-    virtual void shoot(qint8 damage);
-    void takeDamage(qint8 damage);
+    virtual void shoot(bool isDD = false);
+    virtual void takeDamage(qint8 damage);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     Direction getDirection();
 protected:

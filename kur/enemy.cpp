@@ -11,6 +11,14 @@ Enemy::Enemy(qint8 x, qint8 y, QGraphicsObject *parent) : Tank(x, y, parent) {
 
 Enemy::~Enemy(){}
 
+void Enemy::takeDamage(qint8 damage)
+{
+    Tank::takeDamage(damage);
+    if (hp <= 0){
+        emit enemyDeathSignal();
+    }
+}
+
 void Enemy::move(qint64 stepSize)
 {
     Tank::move(stepSize);
@@ -71,7 +79,7 @@ void Enemy::tick(){
             break;
         }
         if(playerCell.x == currentCell.x && playerCell.y == currentCell.y && noObstacles){
-            shoot(1);
+            shoot();
         }
         foreach (auto enemy, enemies) {
             if(enemy->getCell().x == currentCell.x && enemy->getCell().y == currentCell.y){
@@ -102,30 +110,19 @@ bool Enemy::isValidSquare(const QVector<QVector<bool> > &field, Square::Cell cel
 
 Square::Direction Enemy::findShortestPath(const QVector<QVector<bool> > &field,Square::Cell start, Square::Cell end)
 {
-
-
-    // qDebug() << start.x << " -start-" << start.y;
-    // qDebug() << end.x << " -end-" << end.y;
     QQueue<Square::Cell> queue;
 
-    // Массив для хранения пройденных точек
     QVector<QVector<bool>> visited(field.size(), QVector<bool>(field[0].size(), false));
 
-    // Массив для хранения предков каждой точки
     QVector<QVector<Square::Cell>> parents(field.size(), QVector<Square::Cell>(field[0].size(), {-1, -1}));
 
-    // Добавляем начальную точку в очередь
     queue.append(start);
     visited[start.y][start.x] = true;
-    // Пока очередь не пуста
     while (!queue.empty()) {
-        // Извлекаем следующую точку из очереди
         Square::Cell current = queue.front();
         queue.pop_front();
 
-        // Проверяем, достигли ли мы конечной точки
         if (current.x == end.x && current.y == end.y) {
-            // Восстанавливаем кратчайший путь, двигаясь по предкам
             QVector<Square::Cell> path;
 
             while (current.x != -1 && current.y != -1) {
@@ -133,7 +130,6 @@ Square::Direction Enemy::findShortestPath(const QVector<QVector<bool> > &field,S
                 current = parents[current.y][current.x];
             }
 
-            // Возвращаем массив точек, составляющих кратчайший путь
             std::reverse(path.begin(), path.end());
             if(path.size() == 1){
                 return this->direction;
