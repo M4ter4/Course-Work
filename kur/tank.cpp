@@ -21,7 +21,6 @@ Square::Direction Tank::getDirection(){
 
 QRectF Tank::boundingRect() const
 {
-    //return QRectF(-18,-18,36,36);
     return QRectF(-15,-15,30,30);
 }
 

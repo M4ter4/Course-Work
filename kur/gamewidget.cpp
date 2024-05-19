@@ -1,5 +1,5 @@
 #include "gamewidget.h"
-#include "ui_widget.h"
+#include "ui_gamewidget.h"
 #include "square.h"
 #include <QDebug>
 #include <QKeyEvent>
