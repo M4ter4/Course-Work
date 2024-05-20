@@ -72,24 +72,43 @@ void Enemy::tick(){
     move(stepSize);
     double radians = qDegreesToRadians((double)direction);
     Square::Cell currentCell = getCell();
-    bool noObstacles = true;
+    //bool noObstacles = true;
+    // while(true){
+    //     currentCell.x += qRound(qCos(radians));
+    //     currentCell.y += qRound(qSin(radians));
+    //     if(currentCell.x < 0 || currentCell.x > 19 || currentCell.y < 0 || currentCell.y > 19){
+    //         break;
+    //     }
+    //     if(playerCell.x == currentCell.x && playerCell.y == currentCell.y && noObstacles){
+    //         shoot();
+    //     }
+    //     foreach (auto enemy, enemies) {
+    //         if(enemy->getCell().x == currentCell.x && enemy->getCell().y == currentCell.y){
+    //             noObstacles = false;
+    //         }
+    //     }
+
+    //     if (!(*field)[currentCell.y][currentCell.x]){
+    //         noObstacles = false;
+    //     }
+    // }
     while(true){
         currentCell.x += qRound(qCos(radians));
         currentCell.y += qRound(qSin(radians));
         if(currentCell.x < 0 || currentCell.x > 19 || currentCell.y < 0 || currentCell.y > 19){
             break;
         }
-        if(playerCell.x == currentCell.x && playerCell.y == currentCell.y && noObstacles){
+        if(playerCell.x == currentCell.x && playerCell.y == currentCell.y){
             shoot();
+            break;
         }
         foreach (auto enemy, enemies) {
             if(enemy->getCell().x == currentCell.x && enemy->getCell().y == currentCell.y){
-                noObstacles = false;
+                break;
             }
         }
-
         if (!(*field)[currentCell.y][currentCell.x]){
-            noObstacles = false;
+            break;
         }
     }
 }
