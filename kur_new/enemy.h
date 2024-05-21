@@ -24,10 +24,10 @@ private:
      qint64 stepSize = 2;
     Square::Cell playerCell;
     QVector<QVector<bool>>* field;
-    bool isValidSquare(const QVector<QVector<bool>>& field, Square::Cell cell);
-    bool isValidSquare(const QVector<QVector<bool>>& field, Square::Cell cell, QList<Enemy*> enemies);
-    Square::Direction findShortestPath(const QVector<QVector<bool>>& field, Square::Cell start, Square::Cell end);
-    Square::Direction findShortestPath(const QVector<QVector<bool>>& field, Square::Cell start, Square::Cell end, QList<Enemy*> enemies);
+    //bool isValidSquare(const QVector<QVector<bool>>& field, Square::Cell cell);
+    bool isValidSquare(const QVector<QVector<bool>>& field, Square::Cell cell, QList<Enemy*> enemies = QList<Enemy*>());
+    //Square::Direction findShortestPath(const QVector<QVector<bool>>& field, Square::Cell start, Square::Cell end);
+    Square::Direction findShortestPath(const QVector<QVector<bool>>& field, Square::Cell start, Square::Cell end, QList<Enemy*> enemies = QList<Enemy*>());
     Square::Direction turnTo;
 signals:
     void enemyDeathSignal();

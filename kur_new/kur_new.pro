@@ -40,3 +40,18 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    resources/brick.jpg \
+    resources/doubledamage.png \
+    resources/enemy.png \
+    resources/ghost.png \
+    resources/heal.png \
+    resources/map0.txt \
+    resources/map1.txt \
+    resources/map2.txt \
+    resources/map3.txt \
+    resources/map4.txt \
+    resources/player.png \
+    resources/steel.jpg \
+    resources/styles.qss
