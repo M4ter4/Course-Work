@@ -2,14 +2,45 @@
 
 LevelScene::LevelScene(qint8 difficulty) {
     this->setBackgroundBrush(QBrush(Qt::black));
+    QRandomGenerator64 generator(QDateTime::currentDateTime().toMSecsSinceEpoch());
 
+    randomGenerateField(generator);
+
+    qint32 playerX = generator.bounded(0, 20);
+    qint32 playerY = generator.bounded(0, 20);
+    while(!(*field)[playerY][playerX]){
+        playerX = generator.bounded(0, 20);
+        playerY = generator.bounded(0, 20);
+    }
+
+    Player* obj = new Player(playerX,playerY);
+    player = obj;
+    this->addItem(obj);
+    obj->grabKeyboard();
+    connect(obj, &Player::updatePos, this, &LevelScene::onPlayerChangeCell);
+
+    randomGenerateEnemies(generator, difficulty, playerX, playerY);
+
+    powerUpTimer = new QTimer();
+    connect(powerUpTimer, &QTimer::timeout, this, &LevelScene::onPowerUpTimeout);
+    powerUpTimer->start(10000 + 5000*(difficulty-1));
+}
+
+LevelScene::~LevelScene(){}
+
+Player *LevelScene::getPlayer()
+{
+    return this->player;
+}
+
+void LevelScene::randomGenerateField(QRandomGenerator64 generator)
+{
     field = new QVector<QVector<bool>>(20);
 
     for (QVector<bool>& row : *field) {
         row.fill(true, 20);
     }
 
-    QRandomGenerator64 generator(QDateTime::currentDateTime().toMSecsSinceEpoch());
     int randomNumber = generator.bounded(0, 5);
     QString mapLocation("resources/map");
     mapLocation.append(randomNumber+'0').append(".txt");
@@ -35,20 +66,10 @@ LevelScene::LevelScene(qint8 difficulty) {
             }
         }
     }
+}
 
-    qint32 playerX = generator.bounded(0, 20);
-    qint32 playerY = generator.bounded(0, 20);
-    while(!(*field)[playerY][playerX]){
-        playerX = generator.bounded(0, 20);
-        playerY = generator.bounded(0, 20);
-    }
-
-    Player* obj = new Player(playerX,playerY);
-    player = obj;
-    this->addItem(obj);
-    obj->grabKeyboard();
-    connect(obj, &Player::updatePos, this, &LevelScene::onPlayerChangeCell);
-
+void LevelScene::randomGenerateEnemies(QRandomGenerator64 generator, qint8 difficulty, qint8 playerX, qint8 playerY)
+{
     QList<Square::Cell> freePoints;
     for (qint8 y = 0; y < 20; ++y) {
         for (qint8 x = 0; x < 20; ++x) {
@@ -78,17 +99,6 @@ LevelScene::LevelScene(qint8 difficulty) {
         this->addItem(enemy);
         ++currentEnemiesCount;
     }
-
-    powerUpTimer = new QTimer();
-    connect(powerUpTimer, &QTimer::timeout, this, &LevelScene::onPowerUpTimeout);
-    powerUpTimer->start(10000 + 5000*(difficulty-1));
-}
-
-LevelScene::~LevelScene(){}
-
-Player *LevelScene::getPlayer()
-{
-    return this->player;
 }
 
 void LevelScene::onPowerUpTimeout()

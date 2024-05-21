@@ -21,6 +21,8 @@ private:
     Player *player;
     QTimer *powerUpTimer;
     QVector<QVector<bool>>* field;
+    void randomGenerateField(QRandomGenerator64 generator);
+    void randomGenerateEnemies(QRandomGenerator64 generator, qint8 difficulty, qint8 playerX, qint8 playerY);
     qint8 currentEnemiesCount = 0;
 public slots:
     void onPowerUpTimeout();
