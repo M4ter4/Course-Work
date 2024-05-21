@@ -10,31 +10,24 @@ LevelScene::LevelScene(qint8 difficulty) {
     }
 
     QRandomGenerator64 generator(QDateTime::currentDateTime().toMSecsSinceEpoch());
-    int randomNumber;
-    randomNumber = generator.bounded(0, 5);
-    QString mapLocation = "resources/map";
+    int randomNumber = generator.bounded(0, 5);
+    QString mapLocation("resources/map");
     mapLocation.append(randomNumber+'0').append(".txt");
     QFile file(QDir::current().filePath(mapLocation));
     file.open(QIODevice::ReadWrite);
     QTextStream s(&file);
 
-    qint8 walls[20][20];
+
     for (int y = 0; y < 20; ++y) {
         QString current = s.readLine();
         for (int x = 0; x < 20; ++x) {
-            walls[y][x] = current.at(x).unicode() - '0';
-        }
-    }
 
-    for (qint8 y = 0; y < 20; ++y) {
-        for (qint8 x = 0; x < 20; ++x) {
-            qint8 curr = walls[y][x];
-            if(curr == 1){
+            if((current.at(x).unicode() - '0') == 1){
                 SteelWall* wall = new SteelWall(x,y);
                 this->addItem(wall);
                 (*field)[y][x] = false;
             }
-            if(curr == 2){
+            if((current.at(x).unicode() - '0') == 2){
                 BrickWall* wall = new BrickWall(x,y);
                 this->addItem(wall);
                 (*field)[y][x] = false;
